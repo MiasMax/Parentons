@@ -1,0 +1,177 @@
+@import "tailwindcss";
+
+/* Palette Parentons — sauge + miel sur crème */
+:root {
+  --bg: #fbf7f1;
+  --surface: #ffffff;
+  --ink: #1f2a2e;
+  --muted: #5e6b6e;
+  --line: #e8e1d6;
+
+  --sage: #2f6b5e;
+  --sage-hover: #275a4f;
+  --sage-soft: #e3efea;
+  --on-sage: #ffffff;
+
+  --honey: #e9b44c;
+  --honey-hover: #dda43a;
+  --honey-soft: #fbf0d6;
+  --honey-ink: #8a6514;
+  --on-honey: #2a1f05;
+
+  --brick: #b5523b;
+  --brick-soft: #f6e1db;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141a19;
+    --surface: #1c2423;
+    --ink: #ece7df;
+    --muted: #a3ada9;
+    --line: #2c3634;
+
+    --sage: #7db8a7;
+    --sage-hover: #92c7b8;
+    --sage-soft: #1f3330;
+    --on-sage: #0e1a17;
+
+    --honey: #e9b44c;
+    --honey-hover: #f0c264;
+    --honey-soft: #3a2f17;
+    --honey-ink: #f0c873;
+    --on-honey: #2a1f05;
+
+    --brick: #e08a74;
+    --brick-soft: #3a221c;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-sage: var(--sage);
+  --color-sage-hover: var(--sage-hover);
+  --color-sage-soft: var(--sage-soft);
+  --color-on-sage: var(--on-sage);
+  --color-honey: var(--honey);
+  --color-honey-hover: var(--honey-hover);
+  --color-honey-soft: var(--honey-soft);
+  --color-honey-ink: var(--honey-ink);
+  --color-on-honey: var(--on-honey);
+  --color-brick: var(--brick);
+  --color-brick-soft: var(--brick-soft);
+
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-nunito);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-nunito), system-ui, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* Boutons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.8rem 1.4rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: background-color 150ms, transform 150ms, border-color 150ms;
+}
+.btn:active {
+  transform: scale(0.98);
+}
+.btn:disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+.btn-primary {
+  background: var(--sage);
+  color: var(--on-sage);
+}
+.btn-primary:hover {
+  background: var(--sage-hover);
+}
+.btn-honey {
+  background: var(--honey);
+  color: var(--on-honey);
+}
+.btn-honey:hover {
+  background: var(--honey-hover);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1.5px solid var(--line);
+}
+.btn-ghost:hover {
+  border-color: var(--sage);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+}
+
+.field {
+  width: 100%;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 0.9rem;
+  padding: 0.75rem 1rem;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 150ms;
+}
+.field:focus {
+  border-color: var(--sage);
+}
+
+:focus-visible {
+  outline: 2px solid var(--sage);
+  outline-offset: 2px;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.animate-pop {
+  animation: pop 450ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}
