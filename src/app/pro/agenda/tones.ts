@@ -21,4 +21,4 @@ export const typeTone: Record<AppointmentType, { block: string; swatch: string; 
 
 export const HOUR_START = 8;
 export const HOUR_END = 19;
-export const HOUR_PX = 64;
+export const HOUR_PX = 96;

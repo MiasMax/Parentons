@@ -99,7 +99,7 @@ function Agenda() {
   const newButton = (className = "") => (
     <button
       type="button"
-      className={`btn btn-primary ${className}`}
+      className={`btn btn-primary whitespace-nowrap ${className}`}
       onClick={() => setForm({ date: anchor < DEMO_TODAY ? DEMO_TODAY : anchor, time: "10:00" })}
     >
       <CalendarPlus className="h-4 w-4" aria-hidden /> Nouveau RDV

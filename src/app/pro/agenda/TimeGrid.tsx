@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { CalendarClock, History, MapPin, Plus, Trash2, Video, X } from "lucide-react";
 import type { Appointment } from "@/lib/data";
 import { DEMO_TODAY, appointmentName, getPatient } from "@/lib/data";
@@ -63,15 +63,19 @@ export function TimeGrid({
   onCancel: (a: Appointment) => void;
 }) {
   const compact = days.length > 5;
-  const colMin = days.length === 1 ? 0 : compact ? 96 : 120;
+  const colMin = days.length === 1 ? 0 : compact ? 104 : 140;
   const cols = `56px repeat(${days.length}, minmax(${colMin}px, 1fr))`;
 
   return (
     <div className="card overflow-hidden">
-      <div className="overflow-x-auto">
+      {/* La grille défile dans sa carte : les jours restent visibles en haut. */}
+      <div className="overflow-auto md:max-h-[calc(100vh-10rem)]">
         <div style={{ minWidth: colMin ? 56 + days.length * colMin : undefined }}>
           {/* En-têtes des jours */}
-          <div className="grid border-b border-line" style={{ gridTemplateColumns: cols }}>
+          <div
+            className="sticky top-0 z-30 grid border-b border-line bg-surface"
+            style={{ gridTemplateColumns: cols }}
+          >
             <div />
             {days.map((day) => {
               const list = appointments.filter((a) => a.start.startsWith(day));
@@ -80,7 +84,7 @@ export function TimeGrid({
               return (
                 <div
                   key={day}
-                  className={`flex items-center gap-2 border-l border-line px-2 py-2 ${isToday ? "bg-honey-soft/60" : ""}`}
+                  className={`flex items-center gap-2 border-l border-line px-3 py-3 ${isToday ? "bg-honey-soft/60" : ""}`}
                 >
                   <span
                     className={`font-display text-3xl font-extrabold leading-none ${isToday ? "text-honey-ink" : ""}`}
@@ -156,11 +160,11 @@ export function TimeGrid({
 
                   {placed.map(({ a, lane, lanes }) => {
                     const top = ((minutesOf(a.start) - HOUR_START * 60) / 60) * HOUR_PX;
-                    const height = Math.max((a.duration / 60) * HOUR_PX - 2, 22);
+                    const height = Math.max((a.duration / 60) * HOUR_PX - 6, 26);
                     const width = 100 / lanes;
                     const selected = selectedId === a.id;
                     const name = appointmentName(a);
-                    const short = a.duration <= 30;
+                    const short = a.duration < 30;
                     return (
                       <div key={a.id}>
                         <button
@@ -168,26 +172,28 @@ export function TimeGrid({
                           onClick={() => onSelect(selected ? null : a.id)}
                           aria-expanded={selected}
                           aria-label={`${name}, ${a.type}, ${fmtTime.format(new Date(a.start))}, ${a.duration} minutes`}
-                          className={`absolute z-10 overflow-hidden rounded-lg border border-line border-l-4 px-2 py-1 text-left text-xs transition hover:z-20 hover:shadow-md ${
+                          className={`absolute z-10 overflow-hidden rounded-lg border border-line border-l-4 px-2.5 text-left text-sm leading-tight transition hover:z-20 hover:shadow-md ${short ? "py-0.5" : "py-1"} ${
                             typeTone[a.type].block
                           } ${selected ? "z-20 ring-2 ring-sage" : ""}`}
                           style={{
-                            top: top + 1,
+                            top: top + 3,
                             height,
-                            left: `calc(${lane * width}% + 2px)`,
-                            width: `calc(${width}% - 4px)`,
+                            left: `calc(${lane * width}% + 4px)`,
+                            width: `calc(${width}% - 8px)`,
                           }}
                         >
-                          <span className={`flex items-center gap-1 ${short ? "" : "mb-0.5"}`}>
+                          <span className="flex items-center gap-1">
                             <span className="truncate font-bold">{name}</span>
                             {a.patientId && (
                               <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-sage" title="Utilise Parentons" />
                             )}
-                            {a.place === "Visio" && <Video className="ml-auto h-3 w-3 shrink-0" aria-hidden />}
+                            {a.place === "Visio" && <Video className="ml-auto h-3.5 w-3.5 shrink-0" aria-hidden />}
                           </span>
                           {!short && (
-                            <span className="block truncate text-muted">
-                              {a.start.slice(11, 16)} · {a.type}
+                            <span className="block truncate text-xs text-muted">
+                              {a.start.slice(11, 16)}
+                              {/* En vue 7 jours, « Séance » (le cas courant) ne tient pas : la couleur et la fiche le disent. */}
+                              {!(compact && a.type === "Séance") && ` · ${a.type}`}
                             </span>
                           )}
                         </button>
@@ -239,6 +245,10 @@ function Popover({
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
+  // La grille défile : on ramène la fiche dans la zone visible à l'ouverture.
+  const dialog = useRef<HTMLDivElement>(null);
+  useEffect(() => dialog.current?.scrollIntoView({ block: "nearest" }), []);
+
   const patient = getPatient(a.patientId);
   const name = appointmentName(a);
   const same = all
@@ -255,6 +265,7 @@ function Popover({
     <>
       <button type="button" className="fixed inset-0 z-30 cursor-default" aria-label="Fermer" onClick={onClose} />
       <div
+        ref={dialog}
         role="dialog"
         aria-label={`Rendez-vous de ${name}`}
         className={`absolute z-40 w-72 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-line bg-surface shadow-xl ${

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, BookOpen, House, TrendingUp, UserRound, type LucideIcon } from "lucide-react";
+import { ArrowLeftRight, Bell, BookOpen, House, TrendingUp, UserRound, type LucideIcon } from "lucide-react";
 import { Logo } from "./ui";
 import { child } from "@/lib/data";
 
@@ -21,13 +21,48 @@ function isActive(pathname: string, href: string, home: string) {
 }
 
 const parentAside = (
-  <div className="mt-auto rounded-2xl bg-honey-soft p-4 text-sm">
+  <div className="rounded-2xl bg-honey-soft p-4 text-sm">
     <p className="font-display font-bold text-honey-ink">Le saviez-vous ?</p>
     <p className="mt-1 text-ink/80">
       10 minutes régulières valent mieux qu&apos;une longue séance par semaine.
     </p>
   </div>
 );
+
+// Passage discret d'un espace à l'autre pour la démo (l'espace courant se déduit de l'URL).
+function useOtherSpace() {
+  const toPro = !usePathname().startsWith("/pro");
+  return toPro
+    ? { href: "/pro", label: "Espace orthophoniste" }
+    : { href: "/app", label: "Espace parent" };
+}
+
+function SpaceSwitch() {
+  const { href, label } = useOtherSpace();
+  return (
+    <Link
+      href={href}
+      className="flex items-center gap-2 self-end rounded-xl px-3 py-2 text-xs font-medium text-muted transition hover:bg-sage-soft/60 hover:text-ink"
+    >
+      <ArrowLeftRight className="h-3.5 w-3.5" aria-hidden />
+      {label}
+    </Link>
+  );
+}
+
+function SpaceSwitchMobile() {
+  const { href, label } = useOtherSpace();
+  return (
+    <Link
+      href={href}
+      aria-label={`Aller à : ${label}`}
+      title={label}
+      className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full text-muted transition hover:bg-sage-soft/60 hover:text-ink md:hidden"
+    >
+      <ArrowLeftRight className="h-4 w-4" aria-hidden />
+    </Link>
+  );
+}
 
 export function Sidebar({
   links = parentLinks,
@@ -68,7 +103,10 @@ export function Sidebar({
           );
         })}
       </nav>
-      {aside}
+      <div className="mt-auto flex flex-col gap-3">
+        {aside}
+        <SpaceSwitch />
+      </div>
     </aside>
   );
 }
@@ -76,25 +114,28 @@ export function Sidebar({
 export function BottomNav({ links = parentLinks, home = "/app" }: { links?: NavLink[]; home?: string }) {
   const pathname = usePathname();
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface/95 backdrop-blur md:hidden">
-      <ul className="mx-auto flex max-w-md justify-around px-2 pb-[env(safe-area-inset-bottom)]">
-        {links.map(({ href, label, icon: Icon }) => {
-          const active = isActive(pathname, href, home);
-          return (
-            <li key={href}>
-              <Link
-                href={href}
-                className={`flex flex-col items-center gap-0.5 px-3 py-2.5 text-[11px] font-medium ${
-                  active ? "text-sage" : "text-muted"
-                }`}
-              >
-                <Icon className="h-5 w-5" aria-hidden strokeWidth={active ? 2.4 : 2} />
-                {label}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
+    <>
+      <SpaceSwitchMobile />
+      <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface/95 backdrop-blur md:hidden">
+        <ul className="mx-auto flex max-w-md justify-around px-2 pb-[env(safe-area-inset-bottom)]">
+          {links.map(({ href, label, icon: Icon }) => {
+            const active = isActive(pathname, href, home);
+            return (
+              <li key={href}>
+                <Link
+                  href={href}
+                  className={`flex flex-col items-center gap-0.5 px-3 py-2.5 text-[11px] font-medium ${
+                    active ? "text-sage" : "text-muted"
+                  }`}
+                >
+                  <Icon className="h-5 w-5" aria-hidden strokeWidth={active ? 2.4 : 2} />
+                  {label}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+    </>
   );
 }
