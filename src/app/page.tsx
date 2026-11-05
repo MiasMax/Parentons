@@ -47,7 +47,7 @@ const steps = [
 const features = [
   {
     icon: Users,
-    title: "Tableau de bord « à surveiller »",
+    title: "Liste de patients priorisée",
     text: "Les patients qui n'ont rien fait cette semaine ou qui bloquent sur une activité remontent en premier.",
   },
   {
@@ -205,7 +205,7 @@ export default function Home() {
   );
 }
 
-// Aperçu statique du tableau de bord pro (illustration, pas de données réelles).
+// Aperçu statique de la liste de patients (illustration, pas de données réelles).
 function DashboardPreview() {
   const rows = [
     { initials: "IN", name: "Inès, 5 ans", status: "Pas encore commencé cette semaine", done: 0, tone: "honey" },

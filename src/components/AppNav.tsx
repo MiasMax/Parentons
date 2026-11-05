@@ -6,7 +6,8 @@ import { ArrowLeftRight, Bell, BookOpen, House, TrendingUp, UserRound, type Luci
 import { Logo } from "./ui";
 import { child } from "@/lib/data";
 
-export type NavLink = { href: string; label: string; icon: LucideIcon };
+// `count` : pastille à côté du lien (ex. activités à valider), avec son libellé pour les lecteurs d'écran.
+export type NavLink = { href: string; label: string; icon: LucideIcon; count?: number; countLabel?: string };
 
 const parentLinks: NavLink[] = [
   { href: "/app", label: "Accueil", icon: House },
@@ -87,7 +88,7 @@ export function Sidebar({
         )}
       </Link>
       <nav className="flex flex-col gap-1">
-        {links.map(({ href, label, icon: Icon }) => {
+        {links.map(({ href, label, icon: Icon, count, countLabel }) => {
           const active = isActive(pathname, href, home);
           return (
             <Link
@@ -99,6 +100,12 @@ export function Sidebar({
             >
               <Icon className="h-5 w-5" aria-hidden />
               {label}
+              {!!count && (
+                <span className="ml-auto rounded-full bg-honey-soft px-2 py-0.5 text-xs font-semibold text-honey-ink">
+                  {count}
+                  <span className="sr-only"> {countLabel}</span>
+                </span>
+              )}
             </Link>
           );
         })}
@@ -118,18 +125,24 @@ export function BottomNav({ links = parentLinks, home = "/app" }: { links?: NavL
       <SpaceSwitchMobile />
       <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface/95 backdrop-blur md:hidden">
         <ul className="mx-auto flex max-w-md justify-around px-2 pb-[env(safe-area-inset-bottom)]">
-          {links.map(({ href, label, icon: Icon }) => {
+          {links.map(({ href, label, icon: Icon, count, countLabel }) => {
             const active = isActive(pathname, href, home);
             return (
               <li key={href}>
                 <Link
                   href={href}
-                  className={`flex flex-col items-center gap-0.5 px-3 py-2.5 text-[11px] font-medium ${
+                  className={`relative flex flex-col items-center gap-0.5 px-3 py-2.5 text-[11px] font-medium ${
                     active ? "text-sage" : "text-muted"
                   }`}
                 >
                   <Icon className="h-5 w-5" aria-hidden strokeWidth={active ? 2.4 : 2} />
                   {label}
+                  {!!count && (
+                    <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-honey px-1 text-[10px] font-bold text-on-honey">
+                      {count}
+                      <span className="sr-only"> {countLabel}</span>
+                    </span>
+                  )}
                 </Link>
               </li>
             );

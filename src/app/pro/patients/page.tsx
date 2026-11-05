@@ -3,33 +3,58 @@
 import Link from "next/link";
 import { useState } from "react";
 import { CalendarDays, ChevronRight, Search } from "lucide-react";
-import { DEMO_TODAY } from "@/lib/data";
+import { DEMO_TODAY, summarizeToReview } from "@/lib/data";
 import { useAppointments, usePatientsWeek } from "@/lib/store";
-import { fmtDate } from "@/lib/dates";
-import { PageHeader } from "@/components/ui";
-import { AlertBadge, PatientAvatar, WeekDots, patientAlerts } from "@/components/pro";
+import { addDays, fmtDate } from "@/lib/dates";
+import { Logo, PageHeader } from "@/components/ui";
+import { AlertBadge, PatientAvatar, SectionTitle, ToReviewList, WeekDots, patientAlerts } from "@/components/pro";
 
 export default function Patients() {
   const weeks = usePatientsWeek();
   const { appointments } = useAppointments();
   const [query, setQuery] = useState("");
 
+  const assigned = weeks.reduce((n, w) => n + w.programme.length, 0);
+  const done = weeks.reduce((n, w) => n + w.doneCount, 0);
+
+  // Les patients à surveiller d'abord : alertes « brick », puis les autres alertes.
+  const weight = (alerts: ReturnType<typeof patientAlerts>) =>
+    alerts.reduce((n, a) => n + (a.level === "brick" ? 10 : 1), 0);
   const q = query.trim().toLowerCase();
-  const rows = weeks.filter(
-    ({ patient }) =>
-      !q || patient.firstName.toLowerCase().includes(q) || patient.parentName.toLowerCase().includes(q),
+  const rows = weeks
+    .filter(
+      ({ patient }) =>
+        !q || patient.firstName.toLowerCase().includes(q) || patient.parentName.toLowerCase().includes(q),
+    )
+    .map((week) => ({ week, alerts: patientAlerts(week) }))
+    .sort((a, b) => weight(b.alerts) - weight(a.alerts));
+
+  // Résumé des activités non réussies : cette semaine + les deux précédentes, tous patients.
+  const threeWeeksAgo = addDays(DEMO_TODAY, -21);
+  const toReview = summarizeToReview(
+    weeks.flatMap((w) =>
+      [...w.weekItems, ...w.patient.history]
+        .filter((item) => item.feedback.date.slice(0, 10) >= threeWeeksAgo)
+        .map((item) => ({ patient: w.patient, item })),
+    ),
   );
 
   return (
     <div>
-      <PageHeader title="Patients" subtitle={`${weeks.length} enfants suivis avec Parentons.`} />
+      <div className="mb-6 md:hidden">
+        <Logo />
+      </div>
+      <PageHeader
+        title="Patients"
+        subtitle={`${weeks.length} enfants suivis avec Parentons · ${done}/${assigned} activités faites cette semaine.`}
+      />
 
       <label className="relative mb-4 block">
         <span className="sr-only">Rechercher un patient</span>
         <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" aria-hidden />
         <input
           type="search"
-          className="field pl-10"
+          className="field !pl-10"
           placeholder="Rechercher un enfant ou un parent…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -40,9 +65,8 @@ export default function Patients() {
         <p className="card p-5 text-muted">Aucun patient ne correspond à « {query.trim()} ».</p>
       ) : (
         <ul className="flex flex-col gap-3">
-          {rows.map((week) => {
+          {rows.map(({ week, alerts }) => {
             const { patient, programme, doneCount } = week;
-            const alerts = patientAlerts(week);
             const next = appointments
               .filter((a) => a.patientId === patient.id && a.start.slice(0, 10) >= DEMO_TODAY)
               .sort((a, b) => a.start.localeCompare(b.start))[0];
@@ -61,7 +85,7 @@ export default function Patients() {
                       <p className="truncate text-sm text-muted">{patient.diagnosis}</p>
                       {alerts.length > 0 && (
                         <div className="mt-1.5 flex flex-wrap gap-1.5">
-                          {alerts.slice(0, 2).map((a) => (
+                          {alerts.map((a) => (
                             <AlertBadge key={a.text} alert={a} />
                           ))}
                         </div>
@@ -83,6 +107,16 @@ export default function Patients() {
             );
           })}
         </ul>
+      )}
+
+      {!q && (
+        <section className="mt-10">
+          <SectionTitle title="Activités à revoir" />
+          <p className="-mt-2 mb-3 text-sm text-muted">
+            Les activités notées « mitigé » ou « difficile » par les parents ces trois dernières semaines.
+          </p>
+          <ToReviewList items={toReview} />
+        </section>
       )}
     </div>
   );

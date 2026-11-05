@@ -31,7 +31,7 @@ Les tokens sont dans `src/app/globals.css` et exposés à Tailwind via `@theme i
 | Chaleur, mise en avant, progrès | `honey` (`bg-honey-soft text-honey-ink`) |
 | Difficulté, destructif | `brick` (`bg-brick-soft text-brick`) — avec parcimonie, jamais pour « échec de l'enfant » |
 
-- **Typo** : Nunito (`font-display`, 700–800) pour titres et chiffres clés, Inter pour le texte. Pas de troisième police.
+- **Typo** : Nunito (`font-display`, 700–800) pour titres et chiffres clés, Inter pour le texte. Pacifico (`font-logo`) est réservée au nom « Parentons » dans `Logo`, pas de quatrième police.
 - **Classes utilitaires maison** : `.btn .btn-primary | .btn-honey | .btn-ghost`, `.card`, `.field`, `.animate-pop`. Les utiliser avant d'empiler des classes Tailwind équivalentes.
 - **Composants partagés** (`ui.tsx`) : `Logo`, `PageHeader`, `ValidatedBadge`, `DomainIcon`, `Duration`, `ResultPill`, `ProgressRing`, `ActivityRow`. Si un motif apparaît sur 2 pages ou plus, l'extraire ici.
 - **Icônes** : `lucide-react`, `h-4 w-4` / `h-5 w-5`, toujours `aria-hidden` si décoratives. Emojis seulement pour les domaines (déjà dans `DomainIcon`).

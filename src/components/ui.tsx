@@ -16,10 +16,9 @@ export function Logo({ className = "", size = "md" }: { className?: string; size
         className={lg ? "h-12 w-12 sm:h-16 sm:w-16" : "h-9 w-9"}
         priority
       />
-      <span
-        className={`font-display font-extrabold tracking-tight text-ink ${lg ? "text-2xl sm:text-3xl" : "text-xl"}`}
-      >
-        Parentons
+      <span className={`font-logo leading-normal ${lg ? "text-3xl sm:text-4xl" : "text-2xl"}`}>
+        <span className="text-sage">Parent</span>
+        <span className="text-honey">ons</span>
       </span>
     </span>
   );
