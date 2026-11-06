@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { useState } from "react";
 import { CalendarDays, ChevronRight, Search } from "lucide-react";
-import { DEMO_TODAY, summarizeToReview } from "@/lib/data";
+import { DEMO_TODAY } from "@/lib/data";
 import { useAppointments, usePatientsWeek } from "@/lib/store";
-import { addDays, fmtDate } from "@/lib/dates";
+import { fmtDate } from "@/lib/dates";
 import { Logo, PageHeader } from "@/components/ui";
-import { AlertBadge, PatientAvatar, SectionTitle, ToReviewList, WeekDots, patientAlerts } from "@/components/pro";
+import { AlertBadge, PatientAvatar, WeekDots, patientAlerts } from "@/components/pro";
 
 export default function Patients() {
   const weeks = usePatientsWeek();
@@ -28,16 +28,6 @@ export default function Patients() {
     )
     .map((week) => ({ week, alerts: patientAlerts(week) }))
     .sort((a, b) => weight(b.alerts) - weight(a.alerts));
-
-  // Résumé des activités non réussies : cette semaine + les deux précédentes, tous patients.
-  const threeWeeksAgo = addDays(DEMO_TODAY, -21);
-  const toReview = summarizeToReview(
-    weeks.flatMap((w) =>
-      [...w.weekItems, ...w.patient.history]
-        .filter((item) => item.feedback.date.slice(0, 10) >= threeWeeksAgo)
-        .map((item) => ({ patient: w.patient, item })),
-    ),
-  );
 
   return (
     <div>
@@ -107,16 +97,6 @@ export default function Patients() {
             );
           })}
         </ul>
-      )}
-
-      {!q && (
-        <section className="mt-10">
-          <SectionTitle title="Activités à revoir" />
-          <p className="-mt-2 mb-3 text-sm text-muted">
-            Les activités notées « mitigé » ou « difficile » par les parents ces trois dernières semaines.
-          </p>
-          <ToReviewList items={toReview} />
-        </section>
       )}
     </div>
   );

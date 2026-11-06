@@ -83,20 +83,23 @@ export function AlertBadge({ alert }: { alert: Alert }) {
 export function ToReviewList({
   items,
   showPatient = true,
+  ranked = false,
   empty = "Rien à retravailler pour l'instant : toutes les activités ont été réussies.",
 }: {
   items: ToReview[];
   showPatient?: boolean;
+  ranked?: boolean; // affiche le rang devant chaque activité
   empty?: string;
 }) {
   if (items.length === 0) return <p className="card p-5 text-muted">{empty}</p>;
   return (
     <ul className="card divide-y divide-line">
-      {items.map(({ activity, difficile, moyen, entries }) => {
+      {items.map(({ activity, difficile, moyen, entries }, i) => {
         const lastNote = entries.find((e) => e.feedback.note);
         const names = [...new Set(entries.map((e) => e.patient.firstName))];
         return (
           <li key={activity.id} className="flex gap-4 p-4">
+            {ranked && <span className="w-4 shrink-0 pt-2 text-center font-display font-bold text-muted">{i + 1}</span>}
             <DomainIcon domain={activity.domain} />
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center justify-between gap-2">

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowLeftRight, Bell, BookOpen, House, TrendingUp, UserRound, type LucideIcon } from "lucide-react";
+import { ArrowLeftRight, Bell, BookOpen, House, UserRound, type LucideIcon } from "lucide-react";
 import { Logo } from "./ui";
 import { child } from "@/lib/data";
 
@@ -12,7 +12,6 @@ export type NavLink = { href: string; label: string; icon: LucideIcon; count?: n
 const parentLinks: NavLink[] = [
   { href: "/app", label: "Accueil", icon: House },
   { href: "/app/activites", label: "Activités", icon: BookOpen },
-  { href: "/app/progres", label: "Progrès", icon: TrendingUp },
   { href: "/app/rappels", label: "Rappels", icon: Bell },
   { href: "/app/profil", label: child.firstName, icon: UserRound },
 ];
