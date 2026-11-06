@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Check, ChevronDown, MessageSquareWarning, Plus } from "lucide-react";
+import { Check, ChevronDown, MessageSquareWarning, Plus, Sparkles } from "lucide-react";
 import type { Activity, Domain } from "@/lib/data";
 import { activities, orthophoniste, pendingActivities } from "@/lib/data";
 import { useActivityReviews, useCustomActivities } from "@/lib/store";
@@ -56,9 +56,14 @@ function Bibliotheque() {
     <div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <PageHeader title="Activités" subtitle="La bibliothèque que vous pouvez assigner à vos patients." />
-        <Link href="/pro/bibliotheque/nouvelle" className="btn btn-primary shrink-0">
-          <Plus className="h-4 w-4" aria-hidden /> Créer une activité
-        </Link>
+        <div className="flex shrink-0 flex-wrap gap-2">
+          <Link href="/pro/bibliotheque/nouvelle" className="btn btn-primary">
+            <Plus className="h-4 w-4" aria-hidden /> Créer une activité
+          </Link>
+          <button type="button" className="btn btn-ghost">
+            <Sparkles className="h-4 w-4" aria-hidden /> Créer avec l&apos;IA
+          </button>
+        </div>
       </div>
 
       <div className="mb-5 flex gap-1 overflow-x-auto border-b border-line" role="tablist">

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowLeft, CalendarPlus, Check, Mail, Plus, Send, Trash2 } from "lucide-react";
+import { ArrowLeft, CalendarPlus, Check, Mail, Plus, Send, Sparkles, Trash2 } from "lucide-react";
 import {
   DEMO_TODAY,
   activities,
@@ -265,6 +265,9 @@ function AddActivity({
       </label>
       <button type="submit" className="btn btn-primary" disabled={!activityId}>
         <Plus className="h-4 w-4" aria-hidden /> Assigner
+      </button>
+      <button type="button" className="btn btn-ghost">
+        <Sparkles className="h-4 w-4" aria-hidden /> Créer avec l&apos;IA
       </button>
     </form>
   );

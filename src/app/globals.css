@@ -23,30 +23,6 @@
   --brick-soft: #f6e1db;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #141a19;
-    --surface: #1c2423;
-    --ink: #ece7df;
-    --muted: #a3ada9;
-    --line: #2c3634;
-
-    --sage: #7db8a7;
-    --sage-hover: #92c7b8;
-    --sage-soft: #1f3330;
-    --on-sage: #0e1a17;
-
-    --honey: #e9b44c;
-    --honey-hover: #f0c264;
-    --honey-soft: #3a2f17;
-    --honey-ink: #f0c873;
-    --on-honey: #2a1f05;
-
-    --brick: #e08a74;
-    --brick-soft: #3a221c;
-  }
-}
-
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
